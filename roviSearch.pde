@@ -38,7 +38,7 @@ public class RoviSearch {
     RoviSearchResult result = new RoviSearchResult();
     String url = constructURL();
     XML xml = loadXML(url);
-    result.processResult(xml);
+    result.processResult(xml, endpoint);
     return result;
   } 
 

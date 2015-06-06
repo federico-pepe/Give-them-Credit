@@ -3,7 +3,7 @@
  Give Them Credit
  federico@federicopepe.com
  
- Created: 11.04.2015
+ Created: 11.04.201
  Last update: 06.06.2015
  
  */
@@ -32,6 +32,10 @@ void keyPressed() {
   }
   if (key == 'b') {
     rovi = new RoviSearch("Rick Rubin", "name/musiccredits");
+    rovi.doSearch();
+  }
+  if (key == 'a') {
+    rovi = new RoviSearch("MW0002610366", "album/credits");
     rovi.doSearch();
   }
 }

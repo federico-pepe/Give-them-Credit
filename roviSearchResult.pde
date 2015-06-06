@@ -8,41 +8,49 @@
  */
 
 public class RoviSearchResult {
-
+  
   // -------------------- CONSTRUCTOR --------------------------------
   RoviSearchResult() {
-    println("RoviSearchResult");
   }
 
-  void processResult(XML o) {
-    XML[] NameMusicCredit = o.getChild("credits").getChildren("NameMusicCredit");
-    String[] names;
-    String[] ids;
-    names = new String[NameMusicCredit.length];
-    ids = new String[NameMusicCredit.length];
-    int idx = 0;
+  void processResult(XML o, String _endpoint) {
 
-    // DEBUG printArray(NameMusicCredit);
-    // DEBUG println(NameMusicCredit[0].getChild("id").getContent());
+    if (_endpoint == "name/musiccredits") {
+      
+      XML[] NameMusicCreditXML = o.getChild("credits").getChildren("NameMusicCredit");
+          
+      String[] names;
+      String[] ids;
+      names = new String[NameMusicCreditXML.length];
+      ids = new String[NameMusicCreditXML.length];
+      int idx = 0;
 
-    for (XML element : NameMusicCredit) {
+      // DEBUG printArray(NameMusicCredit);
+      // DEBUG println(NameMusicCredit[0].getChild("id").getContent());
 
-      names[idx] = element
-        .getChild("primaryartists")
-        .getChild("CreditArtist")
-          .getChild("name")
-            .getContent();
+      for (XML element : NameMusicCreditXML) {
 
-      ids[idx] = element
-        .getChild("primaryartists")
-        .getChild("CreditArtist")
-          .getChild("id")
-            .getContent();
+        names[idx] = element
+          .getChild("primaryartists")
+          .getChild("CreditArtist")
+            .getChild("name")
+              .getContent();
 
-      idx++;
+        ids[idx] = element
+          .getChild("primaryartists")
+          .getChild("CreditArtist")
+            .getChild("id")
+              .getContent();
+
+        idx++;
+      }
+      
+      printArray(names);
+      
+    } else {
+      // DEBUG
+      println("Currently I can't process this endpoint: " + _endpoint);
     }
-    // DEBUG 
-    println(names[0]);
   }
 }
 
