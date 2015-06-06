@@ -19,4 +19,8 @@ public class NameMusicCreditObject {
   NameMusicCreditObject(){
   };
   
+  String getArtistName() {
+    return artistName;
+  }
+  
 }

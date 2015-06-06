@@ -8,7 +8,9 @@
  */
 
 public class RoviSearchResult {
-  
+
+  NameMusicCreditObject[] results;
+
   // -------------------- CONSTRUCTOR --------------------------------
   RoviSearchResult() {
   }
@@ -16,9 +18,11 @@ public class RoviSearchResult {
   void processResult(XML o, String _endpoint) {
 
     if (_endpoint == "name/musiccredits") {
-      
+
       XML[] NameMusicCreditXML = o.getChild("credits").getChildren("NameMusicCredit");
-          
+
+      results = new NameMusicCreditObject[NameMusicCreditXML.length];
+      println("Results: " + NameMusicCreditXML.length);
       String[] names;
       String[] ids;
       names = new String[NameMusicCreditXML.length];
@@ -29,6 +33,15 @@ public class RoviSearchResult {
       // DEBUG println(NameMusicCredit[0].getChild("id").getContent());
 
       for (XML element : NameMusicCreditXML) {
+        if (element.getChild("primaryartists").getChild("CreditArtist").getChild("name").getContent() != "")
+        {
+          results[idx] = new NameMusicCreditObject();
+          results[idx].artistName = element
+            .getChild("primaryartists")
+            .getChild("CreditArtist")
+              .getChild("name")
+                .getContent();
+        }
 
         names[idx] = element
           .getChild("primaryartists")
@@ -44,9 +57,6 @@ public class RoviSearchResult {
 
         idx++;
       }
-      
-      printArray(names);
-      
     } else {
       // DEBUG
       println("Currently I can't process this endpoint: " + _endpoint);
