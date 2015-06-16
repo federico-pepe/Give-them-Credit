@@ -8,13 +8,16 @@
  */
 
 public class RoviSearchResult {
+  // -------------------- VARIABLES --------------------------------
+  ArrayList<NameMusicCreditObject> n = new ArrayList<NameMusicCreditObject>();
 
   NameMusicCreditObject[] results;
 
   // -------------------- CONSTRUCTOR --------------------------------
   RoviSearchResult() {
   }
-
+  
+  // -------------------- FUNCTIONS --------------------------------
   void processResult(XML o, String _endpoint) {
 
     if (_endpoint == "name/musiccredits") {

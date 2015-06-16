@@ -9,10 +9,6 @@
  */
 
 void setup() {
-  size(680, 680);
-  background(0);
-  textSize(20);
-  smooth();
 }
 
 void draw() {
