@@ -11,26 +11,30 @@
  */
 
 public class RoviSearch {
+  // -------------------- VARIABLES --------------------------------
+
   String apiKey   = APIKey;  // EDIT Configuration File
   String baseURL  = "http://api.rovicorp.com/data/v1.1/";
   String format   = "xml";
   String duration = "10080";
   String count    = "0";
   String offset   = "0";
+  
+  String q = "Rick Rubin";
+  String endpoint = "name/musiccredits";
 
   import java.net.URLEncoder;
 
-  // -------------------- CONSTRUCTOR --------------------------------
+  // -------------------- CONSTRUCTORS --------------------------------
   RoviSearch() {
   }
-
-  String q = "Rick Rubin";
-  String endpoint = "name/musiccredits";
 
   RoviSearch(String _query, String _endpoint) {
     q = _query;
     endpoint = _endpoint;
   } 
+  
+  // -------------------- FUNCTIONS --------------------------------
   /*
   *  Search Functions - Returns roviSearchResult
    */
