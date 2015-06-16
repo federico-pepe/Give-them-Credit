@@ -20,5 +20,8 @@ public class NameMusicCreditObject {
   };
   
   // -------------------- FUNCTIONS --------------------------------
+  void display() {
+     text(credit, random(width), random(height));
+  }
 }
 

@@ -9,6 +9,9 @@
  */
 
 void setup() {
+  size(600, 600);
+  background(40);
+  fill(255);
 }
 
 void draw() {
@@ -20,10 +23,9 @@ void mousePressed() {
 
 void keyPressed() {
   RoviSearch rovi;
-
   // PRESS "L" TO LOAD DATA
   if (key == 'l') {
-    rovi = new RoviSearch("The Beatles", "name/musiccredits");
+    rovi = new RoviSearch("Rocco Tanica", "name/musiccredits");
     rovi.doSearch();
   }
   if (key == 'b') {
