@@ -1,40 +1,52 @@
-/*
+// Give Them Credit
+// Created: 11.04.201
+// Last update: 25.06.2015
+import java.net.URLEncoder;
 
- Give Them Credit
- federico@federicopepe.com
- 
- Created: 11.04.201
- Last update: 06.06.2015
- 
- */
+XML rawData;
+ArrayList<nameCredits> allNameCredits = new ArrayList<nameCredits>();
+ArrayList<Credit> allCredits = new ArrayList<Credit>();
 
 void setup() {
-  size(600, 600);
-  background(40);
-  fill(255);
+  getData();
 }
 
 void draw() {
 }
 
-void mousePressed() {
-  println("NO DATA TO DISPLAY. Press L or B to load data.");
-}
+void getData() {
+  // All the API stuff to get data from ROVI
+  String apiKey   = APIKey;  // EDIT Configuration File
+  String baseURL  = "http://api.rovicorp.com/data/v1.1/";
+  String format   = "xml";
+  String duration = "10080";
+  String count    = "0";
+  String offset   = "0";
 
-void keyPressed() {
-  RoviSearch rovi;
-  // PRESS "L" TO LOAD DATA
-  if (key == 'l') {
-    rovi = new RoviSearch("Rocco Tanica", "name/musiccredits");
-    rovi.doSearch();
+  String albumID = "MW0002521619";   // Random Access Memories by Daft Punk
+  String endpoint = "album/credits";
+
+  Signature sig = new Signature();
+  String url = baseURL + endpoint + "?" + "apikey=" + apiKey + "&sig=" + sig.getSignature() + "&albumid=" + URLEncoder.encode(albumID) + "&format=" + format + "&duration=" + duration + "&count=" + count + "&offset=" + offset;  
+  // Finally Load the data in XML format
+  rawData = loadXML(url);
+  XML[] xmlData = rawData.getChild("credits").getChildren("AlbumCredit");
+ 
+  for (XML element : xmlData) {
+    String id = element.getChild("id").getContent();
+    String name = element.getChild("name").getContent();
+    String[] credits = element.getChild("credit").getContent().split(", ");
+    
+    nameCredits thisNameCredit;
+    thisNameCredit = new nameCredits(id, name);
+    
+    for (int i = 0; i < credits.length; i++) {
+      Credit thisCredit = new Credit(credits[i]);
+      thisNameCredit.credits.add(thisCredit);
+      allCredits.add(thisCredit);
+    }
+    allNameCredits.add(thisNameCredit);
   }
-  if (key == 'b') {
-    rovi = new RoviSearch("Rick Rubin", "name/musiccredits");
-    rovi.doSearch();
-  }
-  if (key == 'a') {
-    rovi = new RoviSearch("MW0002610366", "album/credits");
-    rovi.doSearch();
-  }
+  println(allNameCredits.size() + " : " + allCredits.size());
 }
 
