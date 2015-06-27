@@ -7,6 +7,8 @@ XML rawData;
 ArrayList<nameCredits> allNameCredits = new ArrayList<nameCredits>();
 ArrayList<Credit> allCredits = new ArrayList<Credit>();
 
+IntDict instruments = new IntDict();
+
 void setup() {
   getData();
 }
@@ -44,9 +46,12 @@ void getData() {
       Credit thisCredit = new Credit(credits[i]);
       thisNameCredit.credits.add(thisCredit);
       allCredits.add(thisCredit);
+      instruments.increment(credits[i]);
     }
     allNameCredits.add(thisNameCredit);
   }
   println(allNameCredits.size() + " : " + allCredits.size());
+  instruments.sortKeys();
+  printArray(instruments);
 }
 
