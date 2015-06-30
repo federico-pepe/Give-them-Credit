@@ -15,7 +15,7 @@ float radius;
 void setup() {
   size(displayWidth, displayHeight);
   background(0); 
-  fill(255, 127); 
+  fill(255); 
   getData();
   delta = TWO_PI / allNameCredits.size();
   radius = allNameCredits.size()*2;
