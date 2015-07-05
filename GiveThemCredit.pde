@@ -1,6 +1,6 @@
 // Give Them Credit
-// Created: 11.04.201
-// Last update: 25.06.2015
+// Created: 11.04.2015
+// Last update: 05.07.2015
 import java.net.URLEncoder;
 
 XML rawData;
@@ -37,7 +37,7 @@ void getData() {
    MW0000626129     // The Rise and Fall of Ziggy Stardust by David Bowie
    MW0000392118     // The Nightfly by Donald Fagen
    */
-  String albumID = "MW0000192938";
+  String albumID = "MW0002521619";
   String endpoint = "album/credits";
 
   Signature sig = new Signature();
@@ -81,6 +81,7 @@ void renderData() {
     
     //println("Key: " + k + " value: " + instruments.get(k));
     float diameter = instruments.get(k)*multiplier;
+    fill(255);
     ellipse(xPos, yPos, diameter, diameter);
     fill(0);
     textAlign(CENTER);
@@ -88,12 +89,12 @@ void renderData() {
     fill(127);
     text(k, xPos, textYPos);
     counter++;
-    if (diameter <= textWidth(k)) {
+   
+    if (diameter < textWidth(k)) {
       xPos = xPos + (textWidth(k)+ 25);
     } else {
       xPos = xPos + (diameter + 25);
     }
-    fill(255);
     if(xPos >= width) {
       yPos = yPos + (100 + diameter*2);
       textYPos = (yPos + diameter*2);
