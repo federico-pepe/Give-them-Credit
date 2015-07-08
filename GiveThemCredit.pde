@@ -1,6 +1,6 @@
 // Give Them Credit
 // Created: 11.04.2015
-// Last update: 05.07.2015
+// Last update: 08.07.2015
 import java.net.URLEncoder;
 
 XML rawData;
@@ -37,7 +37,7 @@ void getData() {
    MW0000626129     // The Rise and Fall of Ziggy Stardust by David Bowie
    MW0000392118     // The Nightfly by Donald Fagen
    */
-  String albumID = "MW0002521619";
+  String albumID = "MW0000392118";
   String endpoint = "album/credits";
 
   Signature sig = new Signature();
@@ -64,13 +64,29 @@ void getData() {
       allNameCredits.add(thisNameCredit);
     }
     //println(allNameCredits.size() + " : " + allCredits.size());
-    instruments.sortValuesReverse();
     //printArray(instruments);
+  } else {
+    println("There was an error while fetching data from ROVI API");
+    exit();
   }
 }
-
 void renderData() {
-
+  int textSize = 14;
+  float margin = 50;
+  float textYPos = 0;
+  instruments.sortValuesReverse();
+  for (String k : instruments.keys ()) {
+    fill(127);
+    textAlign(RIGHT);
+    textSize(textSize);
+    text(k, margin + 250, margin + textYPos);
+    rect((margin + 260), margin + textYPos - textSize, 10*instruments.get(k), textSize);
+    textYPos = (textYPos + textSize)+5;
+  }
+}
+void renderData_2() {
+  // This was an attempt to draw data in Circles
+  // but the visualization was too clumsy
   float xPos = 100 + max(instruments.valueArray());
   float yPos = 100 + max(instruments.valueArray());
   int counter = 0;
@@ -102,7 +118,8 @@ void renderData() {
     }
   }
   /*
-  * DISPLAY NAMES IN CIRCLE 
+  * This below was the first attempt to draw data
+  * All the names were putted
    delta = TWO_PI / allNameCredits.size();
    radius = allNameCredits.size()*2;
    textSize(12);
