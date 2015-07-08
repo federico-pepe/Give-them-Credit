@@ -74,14 +74,26 @@ void renderData() {
   int textSize = 14;
   float margin = 50;
   float textYPos = 0;
+  float maxValue = max(instruments.valueArray())*10;
   instruments.sortValuesReverse();
+  
+  fill(127);
+  // Display the credits
   for (String k : instruments.keys ()) {
-    fill(127);
     textAlign(RIGHT);
     textSize(textSize);
     text(k, margin + 250, margin + textYPos);
     rect((margin + 260), margin + textYPos - textSize, 10*instruments.get(k), textSize);
     textYPos = (textYPos + textSize)+5;
+  }
+  // Display the names
+  textYPos = 0;
+  for (int i = 0; i < allNameCredits.size (); i++) {
+    textAlign(LEFT);
+    textSize(textSize);
+    text(allNameCredits.get(i).artistName, width - (margin + 250), margin + textYPos);
+    textYPos = (textYPos + textSize)+5;
+
   }
 }
 void renderData_2() {
