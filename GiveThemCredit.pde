@@ -1,6 +1,6 @@
 // Give Them Credit
 // Created: 11.04.2015
-// Last update: 08.07.2015
+// Last update: 09.07.2015
 import java.net.URLEncoder;
 
 XML rawData;
