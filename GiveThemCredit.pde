@@ -17,10 +17,10 @@ void setup() {
   background(0); 
   fill(255); 
   getData();
-  renderData();
 }
 
 void draw() {
+  renderData();
 }
 
 void getData() {
@@ -54,51 +54,54 @@ void getData() {
 
       nameCredits thisNameCredit;
       thisNameCredit = new nameCredits(id, name);
-
       for (int i = 0; i < credits.length; i++) {
         Credit thisCredit = new Credit(credits[i]);
         thisNameCredit.credits.add(thisCredit);
-        allCredits.add(thisCredit);
         instruments.increment(credits[i]);
       }
       allNameCredits.add(thisNameCredit);
     }
-    //println(allNameCredits.size() + " : " + allCredits.size());
-    //printArray(instruments);
+    // Populate the allCredits ListArray
+    // I NEED TO FIX THIS
+    instruments.sortValuesReverse();
+    for(String k : instruments.keys ()) {
+      Credit thisCredit = new Credit(k, instruments.get(k));
+      allCredits.add(thisCredit);
+    }
+    // END FIX THIS.
   } else {
     println("There was an error while fetching data from ROVI API");
     exit();
   }
 }
 void renderData() {
+  background(0);
   int textSize = 14;
   float margin = 50;
   float textYPos = 0;
-  float maxValue = max(instruments.valueArray())*10;
-  instruments.sortValuesReverse();
-  
+  float maxValue = allCredits.get(0).value*10;
   fill(127);
   // Display the credits
-  for (String k : instruments.keys ()) {
+  for(int i = 0; i < allCredits.size(); i++) {
     textAlign(RIGHT);
     textSize(textSize);
-    text(k, margin + 250, margin + textYPos);
-    rect((margin + 260), margin + textYPos - textSize, 10*instruments.get(k), textSize);
+    text(allCredits.get(i).name, margin + 250, margin + textYPos);
+    rect((margin + 260), margin + textYPos - textSize, 10*allCredits.get(i).value, textSize);
     textYPos = (textYPos + textSize)+5;
   }
   // Display the names
   textYPos = 0;
-  for (int i = 0; i < allNameCredits.size (); i++) {
+  for (int i = 0; i < allNameCredits.size(); i++) {
     textAlign(LEFT);
     textSize(textSize);
     text(allNameCredits.get(i).artistName, width - (margin + 250), margin + textYPos);
     textYPos = (textYPos + textSize)+5;
-
   }
 }
 void renderData_2() {
   // This was an attempt to draw data in Circles
   // but the visualization was too clumsy
+  /*
   float xPos = 100 + max(instruments.valueArray());
   float yPos = 100 + max(instruments.valueArray());
   int counter = 0;
