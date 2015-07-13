@@ -10,7 +10,7 @@ class Credit {
   // -------------------- VARIABLES --------------------------------
   String name;
   int value;
-  //PVector position;
+  PVector pos = new PVector(0, 0);
   // -------------------- CONSTRUCTOR --------------------------------
   Credit(String _name, int _value) {
     name = _name;
@@ -19,7 +19,6 @@ class Credit {
   // -------------------- CONSTRUCTOR --------------------------------
   Credit(String _name) {
     name = _name;
-
   }
 }
 
