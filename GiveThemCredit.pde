@@ -15,7 +15,7 @@ float radius;
 int textSize = 14;
 
 void setup() {
-  size(displayWidth, displayHeight);
+  size(displayWidth, 500);
   background(0); 
   fill(255); 
   getData();
@@ -67,7 +67,7 @@ void getData() {
     // Populate the allCredits ListArray
     // I NEED TO FIX THIS
     instruments.sortValuesReverse();
-    for(String k : instruments.keys ()) {
+    for (String k : instruments.keys ()) {
       Credit thisCredit = new Credit(k, instruments.get(k));
       allCredits.add(thisCredit);
     }
@@ -81,9 +81,9 @@ void renderData() {
   background(0);
   float margin = 50;
   float textYPos = 0;
-  fill(127);
+  fill(255);
   // Display the credits
-  for(int i = 0; i < allCredits.size(); i++) {
+  for (int i = 0; i < allCredits.size (); i++) {
     // SET POSITION
     allCredits.get(i).pos.x = margin + 250;
     allCredits.get(i).pos.y = margin + textYPos;
@@ -95,7 +95,7 @@ void renderData() {
   }
   // Display the names
   textYPos = 0;
-  for (int i = 0; i < allNameCredits.size(); i++) {
+  for (int i = 0; i < allNameCredits.size (); i++) {
     // SET POSITION
     allNameCredits.get(i).pos.x = width - (margin + 250);
     allNameCredits.get(i).pos.y = margin + textYPos;
@@ -103,17 +103,17 @@ void renderData() {
     textSize(textSize);
     text(allNameCredits.get(i).artistName, width - (margin + 250), margin + textYPos);
     textYPos = (textYPos + textSize)+5;
-  }  
+  }
 }
 
 void drawLinks() {
-  for (int i = 0; i < allNameCredits.size(); i++) {
-    for(Credit c : allNameCredits.get(i).credits) {
-      for(int j = 0; j < allCredits.size(); j++) {
-        if(c.name.equals(allCredits.get(j).name)) {
+  for (int i = 0; i < allNameCredits.size (); i++) {
+    for (Credit c : allNameCredits.get (i).credits) {
+      for (int j = 0; j < allCredits.size (); j++) {
+        if (c.name.equals(allCredits.get(j).name)) {
           stroke(255);
-          line(allNameCredits.get(i).pos.x - 10 , allNameCredits.get(i).pos.y - (textSize/2), allCredits.get(j).pos.x + 10, allCredits.get(j).pos.y - (textSize/2));
-        } 
+          line(allNameCredits.get(i).pos.x - 10, allNameCredits.get(i).pos.y - (textSize/2), allCredits.get(j).pos.x + 10, allCredits.get(j).pos.y - (textSize/2));
+        }
       }
     }
   }
