@@ -3,17 +3,17 @@
 // Last update: 13.07.2015
 import java.net.URLEncoder;
 
-// Data
+//---------- DATA ----------//
 XML rawData;
 ArrayList<nameCredits> allNameCredits = new ArrayList<nameCredits>();
 ArrayList<Credit> allCredits = new ArrayList<Credit>();
 
 IntDict instruments = new IntDict();
 
-// Font
+//---------- FONT ----------//
 int textSize = 14;
 
-// GUI
+//---------- GUI ----------//
 float scroll;
 boolean displayLinks;
 
@@ -27,9 +27,7 @@ void setup() {
 void draw() {
   translate(0, scroll);
   renderAlbumData();
-  if(displayLinks) {
-    drawLinks();
-  }
+  drawLinks();
 }
 
 void getData() {
@@ -88,23 +86,25 @@ void renderAlbumData() {
   fill(255);
   // Display the credits
   for (int i = 0; i < allCredits.size (); i++) {
+    Credit thisCredit = allCredits.get(i);
     // SET POSITION
-    allCredits.get(i).pos.x = margin + 250;
-    allCredits.get(i).pos.y = margin + textYPos;
+    thisCredit.pos.x = margin + 250;
+    thisCredit.pos.y = margin + textYPos;
     textAlign(RIGHT);
     textSize(textSize);
-    text(allCredits.get(i).name, margin + 250, margin + textYPos);
+    text(thisCredit.name, margin + 250, margin + textYPos);
     textYPos = (textYPos + textSize)+5;
   }
   // Display the names
   textYPos = 0;
   for (int i = 0; i < allNameCredits.size (); i++) {
+    nameCredits thisCredit = allNameCredits.get(i);
     // SET POSITION
-    allNameCredits.get(i).pos.x = width - (margin + 250);
-    allNameCredits.get(i).pos.y = margin + textYPos;
+    thisCredit.pos.x = width - (margin + 250);
+    thisCredit.pos.y = margin + textYPos;
     textAlign(LEFT);
     textSize(textSize);
-    text(allNameCredits.get(i).artistName, width - (margin + 250), margin + textYPos);
+    text(thisCredit.artistName, width - (margin + 250), margin + textYPos);
     textYPos = (textYPos + textSize)+5;
   }
 }
@@ -114,39 +114,43 @@ void drawLinks() {
     for (Credit c : allNameCredits.get (i).credits) {
       for (int j = 0; j < allCredits.size (); j++) {
         if (c.name.equals(allCredits.get(j).name)) {
-          stroke(255, 100);
+          if (mouseY >= ((allNameCredits.get (i).pos.y - textSize/2)+scroll) && mouseY <= (allNameCredits.get(i).pos.y)+scroll) {
+            stroke(255, 0, 0);
+          } else {
+            stroke(255, 100);
+          }
           line(allNameCredits.get(i).pos.x - 10, allNameCredits.get(i).pos.y - (textSize/2), allCredits.get(j).pos.x + 10, allCredits.get(j).pos.y - (textSize/2));
         }
       }
     }
   }
 }
-/*
-void mouseClicked() {
- // Need to implement X position as well
- if(mouseX <= width/2) {
- for(Credit c : allCredits) {
- if(mouseY >= (c.pos.y - textSize/2) && mouseY <= c.pos.y) {
- println(c.name);
- }
- }
- }
- else {
- for(nameCredits n : allNameCredits) {
- if(mouseY >= (n.pos.y - textSize/2) && mouseY <= n.pos.y) {
- println(n.artistName);
- }
- }
- }
- }
- */
 
+void mouseClicked() {
+  // Need to implement X position as well
+  if (mouseX <= width/2) {
+    for (Credit c : allCredits) {
+      if (mouseY >= ((c.pos.y - textSize/2)+scroll) && mouseY <= (c.pos.y+scroll)) {
+        println(c.name);
+      }
+    }
+  } else {
+    for (nameCredits n : allNameCredits) {
+      if (mouseY >= ((n.pos.y - textSize/2)+scroll) && mouseY <= (n.pos.y+scroll)) {
+        println(n.artistName);
+      }
+    }
+  }
+}
+
+// SCROLLING
 void mouseWheel(MouseEvent e) {
   scroll += e.getAmount();
 }
-
+// KEYPRESSED CURRENTLY NOT IMPLEMENTED
 void keyPressed() {
-  if(key == 'l' || key == 'L') {
+  if (key == 'l' || key == 'L') {
     displayLinks = !displayLinks;
   }
 }
+
