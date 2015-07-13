@@ -9,9 +9,7 @@ ArrayList<Credit> allCredits = new ArrayList<Credit>();
 
 IntDict instruments = new IntDict();
 
-float delta;
-float radius;
-
+// Font
 int textSize = 14;
 
 void setup() {
@@ -22,7 +20,7 @@ void setup() {
 }
 
 void draw() {
-  renderData();
+  renderAlbumData();
   drawLinks();
 }
 
@@ -49,12 +47,10 @@ void getData() {
   rawData = loadXML(url);
   if (rawData != null) {
     XML[] xmlData = rawData.getChild("credits").getChildren("AlbumCredit");
-
     for (XML element : xmlData) {
       String id = element.getChild("id").getContent();
       String name = element.getChild("name").getContent();
       String[] credits = element.getChild("credit").getContent().split(", ");
-
       nameCredits thisNameCredit;
       thisNameCredit = new nameCredits(id, name);
       for (int i = 0; i < credits.length; i++) {
@@ -77,7 +73,7 @@ void getData() {
     exit();
   }
 }
-void renderData() {
+void renderAlbumData() {
   background(0);
   float margin = 50;
   float textYPos = 0;
@@ -107,15 +103,33 @@ void renderData() {
 }
 
 void drawLinks() {
-  for (int i = 0; i < allNameCredits.size (); i++) {
+  for (int i = 0; i < allNameCredits.size(); i++) {
     for (Credit c : allNameCredits.get (i).credits) {
       for (int j = 0; j < allCredits.size (); j++) {
         if (c.name.equals(allCredits.get(j).name)) {
-          stroke(255);
+          stroke(255, 100);
           line(allNameCredits.get(i).pos.x - 10, allNameCredits.get(i).pos.y - (textSize/2), allCredits.get(j).pos.x + 10, allCredits.get(j).pos.y - (textSize/2));
         }
       }
     }
   }
 }
-
+/*
+void mouseClicked() {
+  // Need to implement X position as well
+  if(mouseX <= width/2) {
+    for(Credit c : allCredits) {
+      if(mouseY >= (c.pos.y - textSize/2) && mouseY <= c.pos.y) {
+        println(c.name);
+      }
+    }
+  }
+  else {
+    for(nameCredits n : allNameCredits) {
+      if(mouseY >= (n.pos.y - textSize/2) && mouseY <= n.pos.y) {
+        println(n.artistName);
+      }
+    }
+  }
+}
+*/
