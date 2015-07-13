@@ -3,6 +3,7 @@
 // Last update: 13.07.2015
 import java.net.URLEncoder;
 
+// Data
 XML rawData;
 ArrayList<nameCredits> allNameCredits = new ArrayList<nameCredits>();
 ArrayList<Credit> allCredits = new ArrayList<Credit>();
@@ -12,16 +13,23 @@ IntDict instruments = new IntDict();
 // Font
 int textSize = 14;
 
+// GUI
+float scroll;
+boolean displayLinks;
+
 void setup() {
-  size(displayWidth, 500);
+  size(displayWidth, 3000);
   background(0); 
   fill(255); 
   getData();
 }
 
 void draw() {
+  translate(0, scroll);
   renderAlbumData();
-  drawLinks();
+  if(displayLinks) {
+    drawLinks();
+  }
 }
 
 void getData() {
@@ -38,7 +46,7 @@ void getData() {
    MW0000626129     // The Rise and Fall of Ziggy Stardust by David Bowie
    MW0000392118     // The Nightfly by Donald Fagen
    */
-  String albumID = "MW0002521619";
+  String albumID = "MW0000392118";
   String endpoint = "album/credits";
 
   Signature sig = new Signature();
@@ -86,7 +94,6 @@ void renderAlbumData() {
     textAlign(RIGHT);
     textSize(textSize);
     text(allCredits.get(i).name, margin + 250, margin + textYPos);
-    //rect((margin + 260), margin + textYPos - textSize, 10*allCredits.get(i).value, textSize);
     textYPos = (textYPos + textSize)+5;
   }
   // Display the names
@@ -103,7 +110,7 @@ void renderAlbumData() {
 }
 
 void drawLinks() {
-  for (int i = 0; i < allNameCredits.size(); i++) {
+  for (int i = 0; i < allNameCredits.size (); i++) {
     for (Credit c : allNameCredits.get (i).credits) {
       for (int j = 0; j < allCredits.size (); j++) {
         if (c.name.equals(allCredits.get(j).name)) {
@@ -116,20 +123,30 @@ void drawLinks() {
 }
 /*
 void mouseClicked() {
-  // Need to implement X position as well
-  if(mouseX <= width/2) {
-    for(Credit c : allCredits) {
-      if(mouseY >= (c.pos.y - textSize/2) && mouseY <= c.pos.y) {
-        println(c.name);
-      }
-    }
-  }
-  else {
-    for(nameCredits n : allNameCredits) {
-      if(mouseY >= (n.pos.y - textSize/2) && mouseY <= n.pos.y) {
-        println(n.artistName);
-      }
-    }
+ // Need to implement X position as well
+ if(mouseX <= width/2) {
+ for(Credit c : allCredits) {
+ if(mouseY >= (c.pos.y - textSize/2) && mouseY <= c.pos.y) {
+ println(c.name);
+ }
+ }
+ }
+ else {
+ for(nameCredits n : allNameCredits) {
+ if(mouseY >= (n.pos.y - textSize/2) && mouseY <= n.pos.y) {
+ println(n.artistName);
+ }
+ }
+ }
+ }
+ */
+
+void mouseWheel(MouseEvent e) {
+  scroll += e.getAmount();
+}
+
+void keyPressed() {
+  if(key == 'l' || key == 'L') {
+    displayLinks = !displayLinks;
   }
 }
-*/
