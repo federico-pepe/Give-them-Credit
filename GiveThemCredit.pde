@@ -1,6 +1,6 @@
 // Give Them Credit
 // Created: 11.04.2015
-// Last update: 13.07.2015
+// Last update: 14.07.2015
 import java.net.URLEncoder;
 
 //---------- DATA ----------//
@@ -15,10 +15,9 @@ int textSize = 14;
 
 //---------- GUI ----------//
 float scroll;
-boolean displayLinks;
 
 void setup() {
-  size(displayWidth, 3000);
+  size(displayWidth, 500);
   background(0); 
   fill(255); 
   getData();
@@ -28,6 +27,7 @@ void draw() {
   translate(0, scroll);
   renderAlbumData();
   drawLinks();
+  //drawLinksWithNames();
 }
 
 void getData() {
@@ -44,7 +44,7 @@ void getData() {
    MW0000626129     // The Rise and Fall of Ziggy Stardust by David Bowie
    MW0000392118     // The Nightfly by Donald Fagen
    */
-  String albumID = "MW0000392118";
+  String albumID = "MW0000192938";
   String endpoint = "album/credits";
 
   Signature sig = new Signature();
@@ -114,11 +114,7 @@ void drawLinks() {
     for (Credit c : allNameCredits.get (i).credits) {
       for (int j = 0; j < allCredits.size (); j++) {
         if (c.name.equals(allCredits.get(j).name)) {
-          if (mouseY >= ((allNameCredits.get (i).pos.y - textSize/2)+scroll) && mouseY <= (allNameCredits.get(i).pos.y)+scroll) {
-            stroke(255, 0, 0);
-          } else {
-            stroke(255, 100);
-          }
+          stroke(255, 100);
           line(allNameCredits.get(i).pos.x - 10, allNameCredits.get(i).pos.y - (textSize/2), allCredits.get(j).pos.x + 10, allCredits.get(j).pos.y - (textSize/2));
         }
       }
@@ -126,6 +122,23 @@ void drawLinks() {
   }
 }
 
+void drawLinksWithNames() {
+  if(mouseX >= width/2) {
+    for (int i = 0; i < allNameCredits.size (); i++) {
+      if(allNameCredits.get(i).mouseOver(allNameCredits.get(i).pos.x, allNameCredits.get(i).pos.y)){
+        for (Credit c : allNameCredits.get(i).credits) {
+          for (int j = 0; j < allCredits.size(); j++) {
+            if (c.name.equals(allCredits.get(j).name)) {
+               stroke(255, 0, 0);
+               line(allNameCredits.get(i).pos.x - 10, allNameCredits.get(i).pos.y - (textSize/2), allCredits.get(j).pos.x + 10, allCredits.get(j).pos.y - (textSize/2));
+            }
+          }
+        }
+      }
+    }
+  }
+}
+/*
 void mouseClicked() {
   // Need to implement X position as well
   if (mouseX <= width/2) {
@@ -141,16 +154,10 @@ void mouseClicked() {
       }
     }
   }
-}
+}*/
 
 // SCROLLING
 void mouseWheel(MouseEvent e) {
   scroll += e.getAmount();
-}
-// KEYPRESSED CURRENTLY NOT IMPLEMENTED
-void keyPressed() {
-  if (key == 'l' || key == 'L') {
-    displayLinks = !displayLinks;
-  }
 }
 

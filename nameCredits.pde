@@ -18,5 +18,13 @@ class nameCredits {
     artistID = _id;
     artistName = _name;
   };
+  
+  boolean mouseOver(float _x, float _y) {
+    if ((mouseX >= _x) && (mouseY >= ((_y - textSize/2)+scroll)) && (mouseY <= (_y)+scroll)) {
+      return true;
+    } else {
+      return false;
+    }
+  }  
 }  
 
