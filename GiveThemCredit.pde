@@ -2,12 +2,14 @@
 // Created: 11.04.2015
 // Last update: 15.07.2015
 import java.net.URLEncoder;
+import processing.pdf.*;
 
 //---------- DATA ----------//
-String albumID = "Until the quiet comes";
+String albumID = "Random Access Memories";
 String albumArtist;
 String albumReleaseYear;
 
+//---------- VARIABLES ----------//
 XML rawData;
 ArrayList<nameCredits> allNameCredits = new ArrayList<nameCredits>();
 ArrayList<Credit> allCredits = new ArrayList<Credit>();
@@ -22,10 +24,18 @@ float scroll;
 
 void setup() {
   size(displayWidth, 3000, JAVA2D);
+  colorMode(HSB);
   background(0); 
   smooth();
   fill(255);
   getData();
+  /*
+  //beginRecord(PDF, albumID + ".pdf");
+  translate(0, scroll);
+  renderAlbumData();
+  drawLinks();
+  //endRecord();
+ */ 
 }
 
 void draw() {
@@ -33,6 +43,7 @@ void draw() {
   renderAlbumData();
   drawLinks();
   drawLinksWithNames();
+  //endRecord();
 }
 
 void getData() {
@@ -110,7 +121,7 @@ void renderAlbumData() {
   textAlign(CENTER);
   textSize(titleTextSize);
   String albumText = albumID + " - " + albumArtist + " (" + albumReleaseYear + ")";
-  text(albumText, margin + 250, margin + textYPos);
+  text(albumText, width/2, margin + textYPos);
   textSize(textSize);
   textYPos = titleTextSize + 50;
   // DRAW CREDITS AT BOTTOM
@@ -119,10 +130,10 @@ void renderAlbumData() {
   for (int i = 0; i < allCredits.size (); i++) {
     Credit thisCredit = allCredits.get(i);
     // SET POSITION
-    thisCredit.pos.x = margin + 250;
+    thisCredit.pos.x = width/6;
     thisCredit.pos.y = margin + textYPos;
     textAlign(RIGHT);
-    text(thisCredit.name, margin + 250, margin + textYPos);
+    text(thisCredit.name, width/6, margin + textYPos);
     textYPos = (textYPos + textSize)+5;
   }
   // Display the names
@@ -130,10 +141,10 @@ void renderAlbumData() {
   for (int i = 0; i < allNameCredits.size (); i++) {
     nameCredits thisCredit = allNameCredits.get(i);
     // SET POSITION
-    thisCredit.pos.x = width - (margin + 250);
+    thisCredit.pos.x = width - (width/6);
     thisCredit.pos.y = margin + textYPos;
     textAlign(LEFT);
-    text(thisCredit.artistName, width - (margin + 250), margin + textYPos);
+    text(thisCredit.artistName, width - (width/6), margin + textYPos);
     textYPos = (textYPos + textSize)+5;
   }
 }
@@ -150,15 +161,45 @@ void drawLinks() {
     }
   }
 }
-
+// Use this function to draw coloured lines from artist (right) to credits (left)
+void drawLinkWithColorsArtiststoCredits() {
+  for (int i = 0; i < allNameCredits.size (); i++) {
+    float c0 = map(i, 0, allNameCredits.size(), 0, 255);
+    color c1 = color(c0, 255, 255);
+    for (Credit c : allNameCredits.get (i).credits) {
+      for (int j = 0; j < allCredits.size (); j++) {
+        if (c.name.equals(allCredits.get(j).name)) {
+          stroke(c1);
+          line(allNameCredits.get(i).pos.x - 10, allNameCredits.get(i).pos.y - (textSize/2), allCredits.get(j).pos.x + 10, allCredits.get(j).pos.y - (textSize/2));
+        }
+      }
+    }
+  }
+}
+// Use this function to draw coloured lines from credits (left) to artists (right)
+void drawLinkWithColorsCreditstoArtists() {
+  for(int i = 0; i < allCredits.size(); i++) {
+    float c0 = map(i, 0, allCredits.size(), 0, 255);
+    color c1 = color(c0, 255, 255);  
+    for(String n : allCredits.get(i).artists) {
+      for(int j = 0; j < allNameCredits.size(); j++) {
+        if(n.equals(allNameCredits.get(j).artistName)) {
+          stroke(c1);
+          line(allNameCredits.get(j).pos.x - 10, allNameCredits.get(j).pos.y - (textSize/2), allCredits.get(i).pos.x + 10, allCredits.get(i).pos.y - (textSize/2));
+        }
+      }
+    }
+  }
+}
 void drawLinksWithNames() {
+  // DRAW RED LINES WHEN MOUSE IS OVER NAME OR CREDITS
   if(mouseX >= width/2) {
     for (int i = 0; i < allNameCredits.size (); i++) {
       if(allNameCredits.get(i).mouseOver(allNameCredits.get(i).pos.x, allNameCredits.get(i).pos.y)){
         for (Credit c : allNameCredits.get(i).credits) {
           for (int j = 0; j < allCredits.size(); j++) {
             if (c.name.equals(allCredits.get(j).name)) {
-               stroke(255, 0, 0);
+               stroke(255, 255, 255);
                line(allNameCredits.get(i).pos.x - 10, allNameCredits.get(i).pos.y - (textSize/2), allCredits.get(j).pos.x + 10, allCredits.get(j).pos.y - (textSize/2));
             }
           }
@@ -171,7 +212,7 @@ void drawLinksWithNames() {
         for(String n : allCredits.get(i).artists) {
           for(int j = 0; j < allNameCredits.size(); j++) {
             if(n.equals(allNameCredits.get(j).artistName)) {
-              stroke(255, 0, 0);
+              stroke(255, 255, 255);
               line(allNameCredits.get(j).pos.x - 10, allNameCredits.get(j).pos.y - (textSize/2), allCredits.get(i).pos.x + 10, allCredits.get(i).pos.y - (textSize/2));
             }
           }
