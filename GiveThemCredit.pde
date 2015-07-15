@@ -1,13 +1,12 @@
 // Give Them Credit
 // Created: 11.04.2015
-// Last update: 14.07.2015
+// Last update: 15.07.2015
 import java.net.URLEncoder;
 
 //---------- DATA ----------//
 XML rawData;
 ArrayList<nameCredits> allNameCredits = new ArrayList<nameCredits>();
 ArrayList<Credit> allCredits = new ArrayList<Credit>();
-
 IntDict instruments = new IntDict();
 
 //---------- FONT ----------//
@@ -27,7 +26,7 @@ void draw() {
   translate(0, scroll);
   renderAlbumData();
   drawLinks();
-  //drawLinksWithNames();
+  drawLinksWithNames();
 }
 
 void getData() {
@@ -46,17 +45,20 @@ void getData() {
    */
   String albumID = "MW0000192938";
   String endpoint = "album/credits";
-
+  // Generate Signature and final url
   Signature sig = new Signature();
   String url = baseURL + endpoint + "?" + "apikey=" + apiKey + "&sig=" + sig.getSignature() + "&albumid=" + URLEncoder.encode(albumID) + "&format=" + format + "&duration=" + duration + "&count=" + count + "&offset=" + offset;  
   // Finally Load the data in XML format
   rawData = loadXML(url);
+  // Check if we actually got some data to parse
   if (rawData != null) {
     XML[] xmlData = rawData.getChild("credits").getChildren("AlbumCredit");
     for (XML element : xmlData) {
+      // Parsing XML File
       String id = element.getChild("id").getContent();
       String name = element.getChild("name").getContent();
       String[] credits = element.getChild("credit").getContent().split(", ");
+      // Create nameCredit Object and populate it with data
       nameCredits thisNameCredit;
       thisNameCredit = new nameCredits(id, name);
       for (int i = 0; i < credits.length; i++) {
@@ -64,16 +66,22 @@ void getData() {
         thisNameCredit.credits.add(thisCredit);
         instruments.increment(credits[i]);
       }
+      // Add the Object to the ListArray with all the nameCreditsObject
       allNameCredits.add(thisNameCredit);
     }
     // Populate the allCredits ListArray
-    // I NEED TO FIX THIS
     instruments.sortValuesReverse();
     for (String k : instruments.keys ()) {
       Credit thisCredit = new Credit(k, instruments.get(k));
+      for(int i = 0; i < allNameCredits.size(); i++) {
+        for (Credit c : allNameCredits.get (i).credits) {
+          if(c.name.equals(k)) {
+            thisCredit.artists.add(allNameCredits.get(i).artistName);
+          }
+        }
+      }
       allCredits.add(thisCredit);
     }
-    // END FIX THIS.
   } else {
     println("There was an error while fetching data from ROVI API");
     exit();
@@ -131,6 +139,19 @@ void drawLinksWithNames() {
             if (c.name.equals(allCredits.get(j).name)) {
                stroke(255, 0, 0);
                line(allNameCredits.get(i).pos.x - 10, allNameCredits.get(i).pos.y - (textSize/2), allCredits.get(j).pos.x + 10, allCredits.get(j).pos.y - (textSize/2));
+            }
+          }
+        }
+      }
+    }
+  } else {
+    for(int i = 0; i < allCredits.size(); i++) {
+      if(allCredits.get(i).mouseOver(allCredits.get(i).pos.x, allCredits.get(i).pos.y)){
+        for(String n : allCredits.get(i).artists) {
+          for(int j = 0; j < allNameCredits.size(); j++) {
+            if(n.equals(allNameCredits.get(j).artistName)) {
+              stroke(255, 0, 0);
+              line(allNameCredits.get(j).pos.x - 10, allNameCredits.get(j).pos.y - (textSize/2), allCredits.get(i).pos.x + 10, allCredits.get(i).pos.y - (textSize/2));
             }
           }
         }
