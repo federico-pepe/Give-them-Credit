@@ -2,7 +2,7 @@
 
  Credit Object
  
- June, 2016
+ June, 2015
  federico@federicopepe.com
  
  */
@@ -23,6 +23,7 @@ class Credit {
     name = _name;
   }
   
+  // -------------------- FUNCTIONS --------------------------------
   boolean mouseOver(float _x, float _y) {
     if ((mouseX <= _x) && (mouseY >= ((_y - textSize/2)+scroll)) && (mouseY <= (_y)+scroll)) {
       return true;
