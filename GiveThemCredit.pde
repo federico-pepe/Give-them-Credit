@@ -4,7 +4,10 @@
 import java.net.URLEncoder;
 
 //---------- DATA ----------//
-String albumID = "Abbey Road";
+String albumID = "Until the quiet comes";
+String albumArtist;
+String albumReleaseYear;
+
 XML rawData;
 ArrayList<nameCredits> allNameCredits = new ArrayList<nameCredits>();
 ArrayList<Credit> allCredits = new ArrayList<Credit>();
@@ -12,13 +15,13 @@ IntDict instruments = new IntDict();
 
 //---------- FONT ----------//
 int textSize = 14;
-int titleTextSize = 30;
+int titleTextSize = 38;
 
 //---------- GUI ----------//
 float scroll;
 
 void setup() {
-  size(displayWidth, 500);
+  size(displayWidth, 3000, JAVA2D);
   background(0); 
   smooth();
   fill(255);
@@ -44,6 +47,20 @@ void getData() {
   String endpoint = "album/credits";
   // Generate Signature and final url
   Signature sig = new Signature();
+  //
+  // LOAD ALBUM INFO
+  //
+  String albumUrl = baseURL + "album/info" + "?" + "apikey=" + apiKey + "&sig=" + sig.getSignature() + "&album=" + URLEncoder.encode(albumID) + "&format=" + format;  
+  XML xml = loadXML(albumUrl);
+  XML[] primaryArtists = xml.getChild("album").getChildren("primaryArtists");
+  for(XML element : primaryArtists) {
+    albumArtist = element.getChild("AlbumArtist").getChild("name").getContent();
+  }
+  String[] list = split(xml.getChild("album").getChild("originalReleaseDate").getContent(), "-");
+  albumReleaseYear = list[0];
+  //
+  // LOAD DATA FOR CREDITS
+  //
   String url = baseURL + endpoint + "?" + "apikey=" + apiKey + "&sig=" + sig.getSignature() + "&album=" + URLEncoder.encode(albumID) + "&format=" + format + "&duration=" + duration + "&count=" + count + "&offset=" + offset;  
   // Finally Load the data in XML format
   rawData = loadXML(url);
@@ -87,11 +104,16 @@ void getData() {
 void renderAlbumData() {
   background(0);
   float margin = 50;
-  float textYPos = 0;
-  textSize(titleTextSize);
-  text(albumID, margin + 250, margin+textYPos);
-  textYPos = titleTextSize + 50;
+  float textYPos = titleTextSize/2;
   fill(255);
+  // DRAW ALBUM INFO AT TOP
+  textAlign(CENTER);
+  textSize(titleTextSize);
+  String albumText = albumID + " - " + albumArtist + " (" + albumReleaseYear + ")";
+  text(albumText, margin + 250, margin + textYPos);
+  textSize(textSize);
+  textYPos = titleTextSize + 50;
+  // DRAW CREDITS AT BOTTOM
   textSize(textSize);
   // Display the credits
   for (int i = 0; i < allCredits.size (); i++) {
