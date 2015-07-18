@@ -1,6 +1,6 @@
 // Give Them Credit
 // Created: 11.04.2015
-// Last update: 15.07.2015
+// Last update: 18.07.2015
 import java.net.URLEncoder;
 import processing.pdf.*;
 
@@ -8,9 +8,10 @@ import processing.pdf.*;
 String albumID = "Random Access Memories";
 String albumArtist;
 String albumReleaseYear;
+String albumTitle;
 
 //---------- VARIABLES ----------//
-XML rawData;
+JSONObject json;
 ArrayList<nameCredits> allNameCredits = new ArrayList<nameCredits>();
 ArrayList<Credit> allCredits = new ArrayList<Credit>();
 IntDict instruments = new IntDict();
@@ -31,11 +32,11 @@ void setup() {
   getData();
   /*
   //beginRecord(PDF, albumID + ".pdf");
-  translate(0, scroll);
-  renderAlbumData();
-  drawLinks();
-  //endRecord();
- */ 
+   translate(0, scroll);
+   renderAlbumData();
+   drawLinks();
+   //endRecord();
+   */
 }
 
 void draw() {
@@ -50,57 +51,52 @@ void getData() {
   // All the API stuff to get data from ROVI
   String apiKey   = APIKey;  // EDIT Configuration File
   String baseURL  = "http://api.rovicorp.com/data/v1.1/";
-  String format   = "xml";
-  String duration = "5";
-  String count    = "0";
-  String offset   = "0";
-  // ENDPOINT album/info with &include=all seem more interesting
-  String endpoint = "album/credits";
+  String format   = "json";
+  String endpoint = "album/info";
   // Generate Signature and final url
   Signature sig = new Signature();
-  //
-  // LOAD ALBUM INFO
-  //
-  String albumUrl = baseURL + "album/info" + "?" + "apikey=" + apiKey + "&sig=" + sig.getSignature() + "&album=" + URLEncoder.encode(albumID) + "&format=" + format;  
-  XML xml = loadXML(albumUrl);
-  XML[] primaryArtists = xml.getChild("album").getChildren("primaryArtists");
-  for(XML element : primaryArtists) {
-    albumArtist = element.getChild("AlbumArtist").getChild("name").getContent();
+  // LOAD DATA
+  // Check if json file exist in data/album folder.
+  // If not, load the data from the API and save a new json file.
+  File f = new File(dataPath("data/album/" + albumID + ".json"));
+  if (f.exists()) {
+    json = loadJSONObject("data/album/" + albumID + ".json");
+  } else {
+    String albumUrl = baseURL + endpoint + "?" + "apikey=" + apiKey + "&sig=" + sig.getSignature() + "&album=" + URLEncoder.encode(albumID) + "&include=all&format=" + format;  
+    json = loadJSONObject(albumUrl);
+    albumID = json.getJSONObject("album").getJSONObject("ids").getString("albumId");
+    saveJSONObject(json, "data/album/" + albumID + ".json");
   }
-  String[] list = split(xml.getChild("album").getChild("originalReleaseDate").getContent(), "-");
-  albumReleaseYear = list[0];
-  //
-  // LOAD DATA FOR CREDITS
-  //
-  String url = baseURL + endpoint + "?" + "apikey=" + apiKey + "&sig=" + sig.getSignature() + "&album=" + URLEncoder.encode(albumID) + "&format=" + format + "&duration=" + duration + "&count=" + count + "&offset=" + offset;  
-  // Finally Load the data in XML format
-  rawData = loadXML(url);
-  // Check if we actually got some data to parse
-  if (rawData != null) {
-    XML[] xmlData = rawData.getChild("credits").getChildren("AlbumCredit");
-    for (XML element : xmlData) {
-      // Parsing XML File
-      String id = element.getChild("id").getContent();
-      String name = element.getChild("name").getContent();
-      String[] credits = element.getChild("credit").getContent().split(", ");
-      // Create nameCredit Object and populate it with data
+  if (json != null) {
+    JSONArray primaryArtist = json.getJSONObject("album").getJSONArray("primaryArtists");
+    albumArtist = primaryArtist.getJSONObject(0).getString("name");
+    String[] originalReleaseDate = split(json.getJSONObject("album").getString("originalReleaseDate"), "-");
+    albumReleaseYear = originalReleaseDate[0];
+    albumTitle = json.getJSONObject("album").getString("title");
+    // LOAD DATA FOR CREDITS
+    JSONArray credits = json.getJSONObject("album").getJSONArray("credits");
+    for (int i = 0; i < credits.size (); i++) {
+      JSONObject thisObject = credits.getJSONObject(i);
+      String artistID = thisObject.getString("id");
+      String artistName = thisObject.getString("name");
+      String[] artistCredits = split(thisObject.getString("credit"), ", ");
       nameCredits thisNameCredit;
-      thisNameCredit = new nameCredits(id, name);
-      for (int i = 0; i < credits.length; i++) {
-        Credit thisCredit = new Credit(credits[i]);
+      thisNameCredit = new nameCredits(artistID, artistName);
+
+      for (int j = 0; j < artistCredits.length; j++) {
+        Credit thisCredit = new Credit(artistCredits[j]);
         thisNameCredit.credits.add(thisCredit);
-        instruments.increment(credits[i]);
+        instruments.increment(artistCredits[j]);
       }
-      // Add the Object to the ListArray with all the nameCreditsObject
       allNameCredits.add(thisNameCredit);
     }
     // Populate the allCredits ListArray
     instruments.sortValuesReverse();
     for (String k : instruments.keys ()) {
       Credit thisCredit = new Credit(k, instruments.get(k));
-      for(int i = 0; i < allNameCredits.size(); i++) {
+      for (int i = 0; i < allNameCredits.size (); i++) {
         for (Credit c : allNameCredits.get (i).credits) {
-          if(c.name.equals(k)) {
+          if (c.name.equals(k)) {
             thisCredit.artists.add(allNameCredits.get(i).artistName);
           }
         }
@@ -120,7 +116,7 @@ void renderAlbumData() {
   // DRAW ALBUM INFO AT TOP
   textAlign(CENTER);
   textSize(titleTextSize);
-  String albumText = albumID + " - " + albumArtist + " (" + albumReleaseYear + ")";
+  String albumText = albumTitle + " - " + albumArtist + " (" + albumReleaseYear + ")";
   text(albumText, width/2, margin + textYPos);
   textSize(textSize);
   textYPos = titleTextSize + 50;
@@ -178,12 +174,12 @@ void drawLinkWithColorsArtiststoCredits() {
 }
 // Use this function to draw coloured lines from credits (left) to artists (right)
 void drawLinkWithColorsCreditstoArtists() {
-  for(int i = 0; i < allCredits.size(); i++) {
+  for (int i = 0; i < allCredits.size (); i++) {
     float c0 = map(i, 0, allCredits.size(), 0, 255);
     color c1 = color(c0, 255, 255);  
-    for(String n : allCredits.get(i).artists) {
-      for(int j = 0; j < allNameCredits.size(); j++) {
-        if(n.equals(allNameCredits.get(j).artistName)) {
+    for (String n : allCredits.get (i).artists) {
+      for (int j = 0; j < allNameCredits.size (); j++) {
+        if (n.equals(allNameCredits.get(j).artistName)) {
           stroke(c1);
           line(allNameCredits.get(j).pos.x - 10, allNameCredits.get(j).pos.y - (textSize/2), allCredits.get(i).pos.x + 10, allCredits.get(i).pos.y - (textSize/2));
         }
@@ -193,25 +189,25 @@ void drawLinkWithColorsCreditstoArtists() {
 }
 void drawLinksWithNames() {
   // DRAW RED LINES WHEN MOUSE IS OVER NAME OR CREDITS
-  if(mouseX >= width/2) {
+  if (mouseX >= width/2) {
     for (int i = 0; i < allNameCredits.size (); i++) {
-      if(allNameCredits.get(i).mouseOver(allNameCredits.get(i).pos.x, allNameCredits.get(i).pos.y)){
-        for (Credit c : allNameCredits.get(i).credits) {
-          for (int j = 0; j < allCredits.size(); j++) {
+      if (allNameCredits.get(i).mouseOver(allNameCredits.get(i).pos.x, allNameCredits.get(i).pos.y)) {
+        for (Credit c : allNameCredits.get (i).credits) {
+          for (int j = 0; j < allCredits.size (); j++) {
             if (c.name.equals(allCredits.get(j).name)) {
-               stroke(255, 255, 255);
-               line(allNameCredits.get(i).pos.x - 10, allNameCredits.get(i).pos.y - (textSize/2), allCredits.get(j).pos.x + 10, allCredits.get(j).pos.y - (textSize/2));
+              stroke(255, 255, 255);
+              line(allNameCredits.get(i).pos.x - 10, allNameCredits.get(i).pos.y - (textSize/2), allCredits.get(j).pos.x + 10, allCredits.get(j).pos.y - (textSize/2));
             }
           }
         }
       }
     }
   } else {
-    for(int i = 0; i < allCredits.size(); i++) {
-      if(allCredits.get(i).mouseOver(allCredits.get(i).pos.x, allCredits.get(i).pos.y)){
-        for(String n : allCredits.get(i).artists) {
-          for(int j = 0; j < allNameCredits.size(); j++) {
-            if(n.equals(allNameCredits.get(j).artistName)) {
+    for (int i = 0; i < allCredits.size (); i++) {
+      if (allCredits.get(i).mouseOver(allCredits.get(i).pos.x, allCredits.get(i).pos.y)) {
+        for (String n : allCredits.get (i).artists) {
+          for (int j = 0; j < allNameCredits.size (); j++) {
+            if (n.equals(allNameCredits.get(j).artistName)) {
               stroke(255, 255, 255);
               line(allNameCredits.get(j).pos.x - 10, allNameCredits.get(j).pos.y - (textSize/2), allCredits.get(i).pos.x + 10, allCredits.get(i).pos.y - (textSize/2));
             }
@@ -223,21 +219,21 @@ void drawLinksWithNames() {
 }
 /*
 void mouseClicked() {
-  // Need to implement X position as well
-  if (mouseX <= width/2) {
-    for (Credit c : allCredits) {
-      if (mouseY >= ((c.pos.y - textSize/2)+scroll) && mouseY <= (c.pos.y+scroll)) {
-        println(c.name);
-      }
-    }
-  } else {
-    for (nameCredits n : allNameCredits) {
-      if (mouseY >= ((n.pos.y - textSize/2)+scroll) && mouseY <= (n.pos.y+scroll)) {
-        println(n.artistName);
-      }
-    }
-  }
-}*/
+ // Need to implement X position as well
+ if (mouseX <= width/2) {
+ for (Credit c : allCredits) {
+ if (mouseY >= ((c.pos.y - textSize/2)+scroll) && mouseY <= (c.pos.y+scroll)) {
+ println(c.name);
+ }
+ }
+ } else {
+ for (nameCredits n : allNameCredits) {
+ if (mouseY >= ((n.pos.y - textSize/2)+scroll) && mouseY <= (n.pos.y+scroll)) {
+ println(n.artistName);
+ }
+ }
+ }
+ }*/
 
 // SCROLLING
 void mouseWheel(MouseEvent e) {
