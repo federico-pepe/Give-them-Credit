@@ -7,3 +7,4 @@ application.windows64
 application.macosx
 Configuration.pde
 *.pdf
+*.json
