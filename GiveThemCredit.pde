@@ -1,11 +1,11 @@
 // Give Them Credit
 // Created: 11.04.2015
-// Last update: 18.07.2015
+// Last update: 19.07.2015
 import java.net.URLEncoder;
 import processing.pdf.*;
 
 //---------- DATA ----------//
-String albumID = "Random Access Memories";
+String albumID = "Thriller";
 String albumArtist;
 String albumReleaseYear;
 String albumTitle;
@@ -29,8 +29,8 @@ void setup() {
   smooth();
   fill(255);
   getData();
-  /*
-  //beginRecord(PDF, albumID + ".pdf");
+  //beginRecord(PDF, albumTitle + ".pdf");
+   /*
    translate(0, scroll);
    renderAlbumData();
    drawLinks();
@@ -41,9 +41,11 @@ void setup() {
 void draw() {
   translate(0, scroll);
   renderAlbumData();
-  drawLinks();
+  //drawLinks();
   drawLinksWithNames();
+  //drawLinkWithColorsCreditstoArtists();
   //endRecord();
+  //exit();
 }
 
 void getData() {
@@ -91,7 +93,7 @@ void getData() {
       allNameCredits.add(thisNameCredit);
     }
     // Populate the allCredits ListArray
-    creditsIntDict.sortValuesReverse();
+    creditsIntDict.sortKeys();
     for (String k : creditsIntDict.keys ()) {
       Credit thisCredit = new Credit(k, creditsIntDict.get(k));
       for (int i = 0; i < allNameCredits.size (); i++) {
@@ -139,7 +141,7 @@ void renderAlbumData() {
     // SET POSITION
     thisCredit.pos.x = width - (width/6);
     thisCredit.pos.y = margin + textYPos;
-    textAlign(LEFT);
+    textAlign(LEFT);  
     text(thisCredit.artistName, width - (width/6), margin + textYPos);
     textYPos = (textYPos + textSize)+5;
   }
@@ -228,7 +230,7 @@ void mouseClicked() {
   } else {
     for (nameCredits n : allNameCredits) {
       if (n.mouseOver(n.pos.x, n.pos.y)) {
-        println(n.artistName);
+        println(n.artistID);
       }
     }
   }
