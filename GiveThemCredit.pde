@@ -14,7 +14,6 @@ String albumTitle;
 JSONObject json;
 ArrayList<nameCredits> allNameCredits = new ArrayList<nameCredits>();
 ArrayList<Credit> allCredits = new ArrayList<Credit>();
-IntDict instruments = new IntDict();
 
 //---------- FONT ----------//
 int textSize = 14;
@@ -48,6 +47,7 @@ void draw() {
 }
 
 void getData() {
+  IntDict creditsIntDict = new IntDict();
   // All the API stuff to get data from ROVI
   String apiKey   = APIKey;  // EDIT Configuration File
   String baseURL  = "http://api.rovicorp.com/data/v1.1/";
@@ -86,14 +86,14 @@ void getData() {
       for (int j = 0; j < artistCredits.length; j++) {
         Credit thisCredit = new Credit(artistCredits[j]);
         thisNameCredit.credits.add(thisCredit);
-        instruments.increment(artistCredits[j]);
+        creditsIntDict.increment(artistCredits[j]);
       }
       allNameCredits.add(thisNameCredit);
     }
     // Populate the allCredits ListArray
-    instruments.sortValuesReverse();
-    for (String k : instruments.keys ()) {
-      Credit thisCredit = new Credit(k, instruments.get(k));
+    creditsIntDict.sortValuesReverse();
+    for (String k : creditsIntDict.keys ()) {
+      Credit thisCredit = new Credit(k, creditsIntDict.get(k));
       for (int i = 0; i < allNameCredits.size (); i++) {
         for (Credit c : allNameCredits.get (i).credits) {
           if (c.name.equals(k)) {
@@ -217,23 +217,22 @@ void drawLinksWithNames() {
     }
   }
 }
-/*
+
 void mouseClicked() {
- // Need to implement X position as well
- if (mouseX <= width/2) {
- for (Credit c : allCredits) {
- if (mouseY >= ((c.pos.y - textSize/2)+scroll) && mouseY <= (c.pos.y+scroll)) {
- println(c.name);
- }
- }
- } else {
- for (nameCredits n : allNameCredits) {
- if (mouseY >= ((n.pos.y - textSize/2)+scroll) && mouseY <= (n.pos.y+scroll)) {
- println(n.artistName);
- }
- }
- }
- }*/
+  if (mouseX <= width/2) {
+    for (Credit c : allCredits) {
+      if (c.mouseOver(c.pos.x, c.pos.y)) {
+        println(c.name);
+      }
+    }
+  } else {
+    for (nameCredits n : allNameCredits) {
+      if (n.mouseOver(n.pos.x, n.pos.y)) {
+        println(n.artistName);
+      }
+    }
+  }
+}
 
 // SCROLLING
 void mouseWheel(MouseEvent e) {
