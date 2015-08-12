@@ -5,7 +5,7 @@ import java.net.URLEncoder;
 import processing.pdf.*;
 
 //---------- DATA ----------//
-String albumID = "Thriller";
+String albumID = "Random Access Memories";
 String albumArtist;
 String albumReleaseYear;
 String albumTitle;
@@ -21,15 +21,19 @@ int titleTextSize = 38;
 
 //---------- GUI ----------//
 float scroll;
+color backgroundColor = color(0);
+color textColor = color(255);
 
 void setup() {
   size(displayWidth, 3000, JAVA2D);
   colorMode(HSB);
-  background(0); 
+  background(backgroundColor); 
   smooth();
-  fill(255);
+  fill(textColor);
   getData();
-  //beginRecord(PDF, albumTitle + ".pdf");
+  //println(allNameCredits.size());
+  //println(allCredits.size());
+  beginRecord(PDF, albumTitle + ".pdf");
    /*
    translate(0, scroll);
    renderAlbumData();
@@ -41,11 +45,11 @@ void setup() {
 void draw() {
   translate(0, scroll);
   renderAlbumData();
-  //drawLinks();
-  drawLinksWithNames();
-  //drawLinkWithColorsCreditstoArtists();
-  //endRecord();
-  //exit();
+  drawLinks();
+  //drawLinksWithNames();
+  drawLinkWithColorsArtiststoCredits();
+  endRecord();
+  exit();
 }
 
 void getData() {
@@ -111,10 +115,10 @@ void getData() {
   }
 }
 void renderAlbumData() {
-  background(0);
+  background(backgroundColor);
   float margin = 50;
   float textYPos = titleTextSize/2;
-  fill(255);
+  fill(textColor);
   // DRAW ALBUM INFO AT TOP
   textAlign(CENTER);
   textSize(titleTextSize);
