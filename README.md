@@ -12,6 +12,7 @@ String APISecret  = "REPLACE WITH YOUR APISECRET";
 ## License
 This program is licensed and GNU GPL v2.0
 
-Like this project? Found a bug? Feel free to send me an email (mailto:federico@federicopepe.com) or tweet [@fedpep](http://www.twitter.com/@fedpep).
+## Say Hello
+Like this project? Found a bug? Feel free to send me an email federico@federicopepe.com or tweet [@fedpep](http://www.twitter.com/@fedpep).
 
 Last update: 1 September 2015
