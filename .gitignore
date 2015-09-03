@@ -8,8 +8,4 @@ application.macosx
 Configuration.pde
 *.pdf
 *.json
-/css
-/fonts
-/images
-/js
 /scss
