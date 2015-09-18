@@ -1,6 +1,6 @@
 // Give Them Credit
 // Created: 11.04.2015
-// Last update: 19.07.2015
+// Last update: 18.09.2015
 import java.net.URLEncoder;
 import processing.pdf.*;
 
@@ -33,23 +33,28 @@ void setup() {
   getData();
   //println(allNameCredits.size());
   //println(allCredits.size());
-  beginRecord(PDF, albumTitle + ".pdf");
-   /*
+  //beginRecord(PDF, albumTitle + ".pdf");
+   
    translate(0, scroll);
    renderAlbumData();
-   drawLinks();
+   //drawLinks();
    //endRecord();
-   */
+   
 }
 
 void draw() {
   translate(0, scroll);
   renderAlbumData();
-  drawLinks();
-  //drawLinksWithNames();
-  drawLinkWithColorsArtiststoCredits();
-  endRecord();
-  exit();
+  /*
+   * Use drawLinks() to draw b/n linkes between credits and artists
+   * Use drawLinksWithNames() for hover effect
+   *
+   */
+  if(allNameCredits.size() > allCredits.size()) {
+    drawLinkWithColorsArtiststoCredits();
+  } else {
+    drawLinkWithColorsCreditstoArtists();
+  }
 }
 
 void getData() {
@@ -165,10 +170,10 @@ void drawLinks() {
 }
 // Use this function to draw coloured lines from artist (right) to credits (left)
 void drawLinkWithColorsArtiststoCredits() {
-  for (int i = 0; i < allNameCredits.size (); i++) {
+  for (int i = 0; i < allNameCredits.size(); i++) {
     float c0 = map(i, 0, allNameCredits.size(), 0, 255);
     color c1 = color(c0, 255, 255);
-    for (Credit c : allNameCredits.get (i).credits) {
+    for (Credit c : allNameCredits.get(i).credits) {
       for (int j = 0; j < allCredits.size (); j++) {
         if (c.name.equals(allCredits.get(j).name)) {
           stroke(c1);
